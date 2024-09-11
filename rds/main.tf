@@ -4,8 +4,8 @@ resource "aws_db_subnet_group" "database_subnet_group" {
   description = "subnets for database instance"
 
   subnet_ids = [
-    aws_subnet.private_data_subnet_az1.id,
-    aws_subnet.private_data_subnet_az2.id
+    var.private_data_subnet_az1.id,
+    var.private_data_subnet_az2.id
   ]
 
   tags = {
@@ -15,22 +15,22 @@ resource "aws_db_subnet_group" "database_subnet_group" {
 
 # Create the RDS instance
 resource "aws_db_instance" "dev_rds_db" {
-  identifier              = "dev-rds-db"
-  engine                  = "mysql"
-  engine_version          = "8.0.36"
-  instance_class          = "db.t3.medium"
+  identifier              = var.database_identifier
+  engine                  = var.database_engine
+  engine_version          = var.engine_version
+  instance_class          = var.database_instance_class
   skip_final_snapshot     = true
   allocated_storage       = 20
   max_allocated_storage   = 100
   db_subnet_group_name    = aws_db_subnet_group.database_subnet_group.name
-  vpc_security_group_ids  = [aws_security_group.database_security_group.id]
+  vpc_security_group_ids  = [var.database_security_group_id]
   multi_az                = true 
   username                = var.db_master_username
   password                = var.db_master_password
-  db_name                 = "applicationdb"
+  db_name                 = var.database_name
   storage_encrypted       = true
   backup_retention_period = 7
-  parameter_group_name    = "default.mysql8.0" 
+  parameter_group_name    = var.parameter_groupname 
 
   tags = {
     Name = "dev-rds-db"
