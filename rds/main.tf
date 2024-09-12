@@ -32,6 +32,10 @@ resource "aws_db_instance" "dev_rds_db" {
   backup_retention_period = 7
   parameter_group_name    = var.parameter_groupname 
 
+  lifecycle {
+    create_before_destroy = true
+  }
+
   tags = {
     Name = "dev-rds-db"
   }
